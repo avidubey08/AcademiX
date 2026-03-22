@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcademiX - Login</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .glass-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+      padding: 40px;
+      width: 350px;
+      text-align: center;
+      color: #fff;
+    }
+
+    .glass-container h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+
+    .input-group {
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 0.9em;
+    }
+
+    .input-group input, .input-group select {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #fff;
+      font-size: 1em;
+      outline: none;
+      box-sizing: border-box;
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+    }
+
+    .input-group input::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .input-group select option {
+      background: #a777e3;
+      color: #fff;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+      box-sizing: border-box;
+    }
+
+    button:hover {
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    #error-message {
+      color: #ffcccc;
+      margin-bottom: 15px;
+      font-size: 0.9em;
+      min-height: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="glass-container">
+   <div style="text-align: center; margin-bottom: 25px;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 80" style="width: 100%; max-width: 260px; height: auto;">
+        <defs>
+          <linearGradient id="academixGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#5dd39e" /><stop offset="100%" stop-color="#2d6a8d" />
+          </linearGradient>
+          <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+            <feGaussianBlur stdDeviation="2" result="blur" />
+            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+          </filter>
+        </defs>
+        <path d="M 35 15 L 15 15 L 15 65 L 35 65" fill="none" stroke="url(#academixGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+        <path d="M 65 15 L 85 15 L 85 65 L 65 65" fill="none" stroke="url(#academixGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" filter="url(#glow)"/>
+        <path d="M 50 25 L 25 38 L 50 51 L 75 38 Z" fill="url(#academixGrad)" />
+        <path d="M 32 42 L 32 55 C 32 60, 68 60, 68 55 L 68 42" fill="none" stroke="#f8fafc" stroke-width="3" />
+        <circle cx="50" cy="51" r="2.5" fill="#fff" />
+        <text x="110" y="48" font-family="'Segoe UI', Tahoma, sans-serif" font-size="32" font-weight="800" fill="#ffffff">Academi</text>
+        <text x="245" y="48" font-family="'Segoe UI', Tahoma, sans-serif" font-size="32" font-weight="900" fill="url(#academixGrad)">X</text>
+        <text x="112" y="68" font-family="'Segoe UI', Tahoma, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1" letter-spacing="2">AI ATTENDANCE</text>
+      </svg>
+    </div>
+    <div id="error-message"></div>
+    <form id="login-form">
+      <div class="input-group">
+        <label for="role">Sign in as:</label>
+        <select id="role" required>
+          <option value="student">Student</option>
+          <option value="professor">Professor</option>
+          <option value="admin">Admin</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Enter your email" required>
+      </div>
+      <div class="input-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Enter your password" required>
+      </div>
+      <button type="submit">Sign In</button>
+      
+      <div style="margin-top: 15px; font-size: 0.9em;">
+        <a href="forgot-password.html" style="color: #fff; text-decoration: none; opacity: 0.8;">Forgot Password?</a>
+      </div>
+    </form>
+  </div>
+
+  <script src="../js/auth.js"></script>
+</body>
+</html>

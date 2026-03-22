@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AcademiX - Admin Dashboard</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #20456a, #2b7a78 45%, #6fcf97);
+      min-height: 100vh; color: #f5f7fa;
+    }
+
+    header {
+      background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2); color: #fff;
+      padding: 20px; display: flex; justify-content: space-between; align-items: center;
+    }
+    header h1 { margin: 0; font-size: 1.5em; }
+    button.logout-btn {
+      background: rgba(230, 57, 70, 0.8); color: #fff; border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 10px 15px; border-radius: 5px; cursor: pointer; font-weight: bold;
+    }
+    button.logout-btn:hover { background: #d62828; }
+
+    .container {
+      max-width: 1100px; margin: 40px auto; padding: 20px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.14); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.22); border-radius: 10px; padding: 30px;
+      box-shadow: 0 12px 30px rgba(17, 24, 39, 0.25);
+    }
+    
+    /* Make the manage users card span both columns */
+    .full-width { grid-column: 1 / -1; }
+
+    .card h2 { margin-top: 0; color: #f8fafc; border-bottom: 2px solid rgba(255, 255, 255, 0.2); padding-bottom: 10px; margin-bottom: 20px; }
+
+    .input-group { margin-bottom: 15px; }
+    .input-group label { display: block; margin-bottom: 5px; font-weight: 600; color: #f8fafc; }
+    .input-group input {
+      width: 100%; padding: 10px; border: 1px solid rgba(255, 255, 255, 0.28);
+      border-radius: 5px; box-sizing: border-box; background: rgba(255, 255, 255, 0.2); color: #fff;
+    }
+    .input-group input::placeholder { color: rgba(255, 255, 255, 0.78); }
+
+    .btn-submit {
+      width: 100%; background: rgba(17, 24, 39, 0.72); color: #fff; border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 12px; border-radius: 5px; font-size: 1em; font-weight: bold; cursor: pointer; transition: background 0.3s;
+    }
+    .btn-submit:hover { background: rgba(17, 24, 39, 0.86); }
+
+    .message { margin-top: 15px; padding: 10px; border-radius: 5px; display: none; font-weight: 500; }
+    .message.success { background: rgba(0, 188, 124, 0.18); color: #d1fae5; border: 1px solid rgba(0, 188, 124, 0.4); }
+    .message.error { background: rgba(239, 68, 68, 0.2); color: #fee2e2; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    /* --- NEW: Table Styles --- */
+    table { width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.08); border-radius: 8px; overflow: hidden; margin-top: 10px; }
+    th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid rgba(255, 255, 255, 0.18); }
+    th { background-color: rgba(17, 24, 39, 0.45); color: #f8fafc; }
+    tr:hover { background-color: rgba(255, 255, 255, 0.12); }
+    
+    .action-btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-right: 5px; color: white; }
+    .btn-edit { background: #f39c12; }
+    .btn-edit:hover { background: #d68910; }
+    .btn-delete { background: #e74c3c; }
+    .btn-delete:hover { background: #c0392b; }
+
+    /* --- NEW: Modal Styles for Editing Users --- */
+    .modal-overlay {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.6); backdrop-filter: blur(4px); z-index: 1000;
+      justify-content: center; align-items: center;
+    }
+    .modal-box {
+      background: #1e3a5f; padding: 30px; border-radius: 10px; width: 400px;
+      border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+    .modal-box h3 { margin-top: 0; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+    .close-btn { background: #7f8c8d; margin-top: 10px; }
+  </style>
+</head>
+<body>
+
+ <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255, 255, 255, 0.15);">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 80" width="220" height="50">
+      <defs>
+        <linearGradient id="academixGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#5dd39e" /><stop offset="100%" stop-color="#2d6a8d" />
+        </linearGradient>
+      </defs>
+      <path d="M 35 15 L 15 15 L 15 65 L 35 65" fill="none" stroke="url(#academixGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 65 15 L 85 15 L 85 65 L 65 65" fill="none" stroke="url(#academixGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 50 25 L 25 38 L 50 51 L 75 38 Z" fill="url(#academixGrad)" />
+      <path d="M 32 42 L 32 55 C 32 60, 68 60, 68 55 L 68 42" fill="none" stroke="#f8fafc" stroke-width="3" />
+      <circle cx="50" cy="51" r="2.5" fill="#fff" />
+      <text x="110" y="48" font-family="'Segoe UI', Tahoma, sans-serif" font-size="32" font-weight="800" fill="#ffffff">Academi</text>
+      <text x="245" y="48" font-family="'Segoe UI', Tahoma, sans-serif" font-size="32" font-weight="900" fill="url(#academixGrad)">X</text>
+      <text x="112" y="68" font-family="'Segoe UI', Tahoma, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1" letter-spacing="2">AI ATTENDANCE</text>
+    </svg>
+
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <span style="font-size: 1.1em; font-weight: 500; color: #e2e8f0;">Admin Dashboard <span id="admin-name" style="font-weight: 700; color: #fff;"></span></span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+  <div class="container">
+    <div class="card">
+      <h2>Add Professor</h2>
+      <div id="prof-msg" class="message"></div>
+      <form id="add-prof-form">
+        <div class="input-group">
+          <label>Name</label>
+          <input type="text" id="prof-name" required>
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="prof-email" required>
+        </div>
+        <div class="input-group">
+          <label>Department</label>
+          <input type="text" id="prof-dept" required>
+        </div>
+        <div class="input-group">
+          <label>Subjects (comma separated)</label>
+          <input type="text" id="prof-subjects" required placeholder="e.g. CS101, Math202">
+        </div>
+        <div class="input-group">
+          <label>Temporary Password</label>
+          <input type="password" id="prof-pass" required>
+        </div>
+        <button type="submit" class="btn-submit">Add Professor</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Add Student</h2>
+      <div id="student-msg" class="message"></div>
+      <form id="add-student-form">
+        <div class="input-group">
+          <label>Name</label>
+          <input type="text" id="student-name" required>
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="student-email" required>
+        </div>
+        <div class="input-group">
+          <label>Department</label>
+          <input type="text" id="student-dept" required>
+        </div>
+        <div class="input-group">
+          <label>Roll Number</label>
+          <input type="text" id="student-roll" required>
+        </div>
+        <div class="input-group">
+          <label>Temporary Password</label>
+          <input type="password" id="student-pass" required>
+        </div>
+        <div class="input-group">
+          <label>Face Registration</label>
+          <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+            <button type="button" id="start-webcam" class="btn-submit" style="background: #e6a817; flex: 1;">Start Webcam</button>
+            <button type="button" id="scan-face" class="btn-submit" style="background: #28a745; flex: 1;" disabled>Scan Face</button>
+          </div>
+          <div id="video-container" style="position: relative; width: 100%; display: none; margin-bottom: 10px;">
+            <video id="webcam" autoplay muted playsinline style="width: 100%; border-radius: 5px; background: #000;"></video>
+          </div>
+          <div id="scan-status" class="message"></div>
+        </div>
+        <button type="submit" class="btn-submit">Add Student</button>
+      </form>
+    </div>
+
+    <div class="card full-width">
+      <h2>Manage Users</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Department</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body">
+          <tr><td colspan="5" style="text-align: center;">Loading users...</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <div id="edit-modal" class="modal-overlay">
+    <div class="modal-box">
+      <h3>Edit User</h3>
+      <form id="edit-user-form">
+        <input type="hidden" id="edit-user-id">
+        <div class="input-group">
+          <label>Name</label>
+          <input type="text" id="edit-name" required>
+        </div>
+        <div class="input-group">
+          <label>Email</label>
+          <input type="email" id="edit-email" required>
+        </div>
+        <div class="input-group">
+          <label>Department</label>
+          <input type="text" id="edit-dept" required>
+        </div>
+        
+        <div class="input-group" id="edit-subjects-group" style="display: none;">
+          <label>Subjects (comma separated)</label>
+          <input type="text" id="edit-subjects">
+        </div>
+        <div class="input-group" id="edit-roll-group" style="display: none;">
+          <label>Roll Number</label>
+          <input type="text" id="edit-roll">
+        </div>
+
+        <button type="submit" class="btn-submit">Save Changes</button>
+        <button type="button" class="btn-submit close-btn" onclick="closeEditModal()">Cancel</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/admin.js"></script>
+</body>
+</html>

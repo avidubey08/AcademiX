@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>AcademiX - Professor Dashboard</title>
+  <style>
+    body {
+      margin: 0; padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(140deg, #0f2a43, #2f4858 50%, #57cc99);
+      min-height: 100vh;
+      color: #f7fafc;
+    }
+    header {
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      color: #fff;
+      padding: 20px; display: flex;
+      justify-content: space-between; align-items: center;
+    }
+    header h1 { margin: 0; font-size: 1.5em; }
+    button.logout-btn {
+      background: rgba(231, 76, 60, 0.82); color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      padding: 10px 15px; border-radius: 5px;
+      cursor: pointer; font-weight: bold;
+    }
+    button.logout-btn:hover { background: #c0392b; }
+    
+    .container {
+      max-width: 1200px; margin: 30px auto;
+      padding: 0 20px;
+    }
+    
+    .panel {
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 20px; border-radius: 8px;
+      box-shadow: 0 14px 34px rgba(10, 20, 35, 0.28); margin-bottom: 20px;
+    }
+    .panel h2 { margin-top: 0; color: #f8fafc; }
+    
+    .status { padding: 10px; border-radius: 4px; margin-bottom: 15px; background: rgba(255, 255, 255, 0.2); color: #f8fafc; }
+    
+    .controls {
+      display: flex; gap: 15px; margin-bottom: 20px; align-items: center;
+    }
+    .controls select, .controls input, .controls button {
+      padding: 10px; font-size: 1em; border-radius: 5px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+    .controls input { background: rgba(255, 255, 255, 0.2); color: #fff; }
+    .controls input::placeholder { color: rgba(255, 255, 255, 0.78); }
+    .controls button {
+      background: rgba(39, 174, 96, 0.82); color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer; font-weight: bold;
+    }
+    .controls button:hover { background: #219150; }
+    .controls button:disabled { background: #95a5a6; cursor: not-allowed; }
+
+    .video-wrapper {
+      position: relative;
+      display: inline-block;
+      border: 2px solid #34495e;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+      width: 100%;
+      max-width: 720px;
+    }
+    video { display: block; width: 100%; height: auto; }
+    canvas { position: absolute; top: 0; left: 0; }
+
+    .log-container {
+      margin-top: 20px;
+      max-height: 250px;
+      overflow-y: auto;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 5px; padding: 10px;
+    }
+    .log-entry {
+      padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.18); font-family: monospace;
+    }
+    .log-entry:last-child { border-bottom: none; }
+    .success-text { color: #8ef9b7; font-weight: bold; }
+
+    /* NEW: Table Styles for Stats */
+    #class-stats-table {
+      width: 100%; border-collapse: collapse; background: rgba(255, 255, 255, 0.08); border-radius: 8px; overflow: hidden;
+    }
+    #class-stats-table th {
+      background-color: rgba(17, 24, 39, 0.45); color: #f8fafc; text-align: left; padding: 12px 15px;
+    }
+    #class-stats-table td {
+      padding: 10px 15px; border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+    }
+  </style>
+</head>
+<body>
+
+ <header style="display: flex; justify-content: space-between; align-items: center; padding: 15px 30px; background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(14px); border-bottom: 1px solid rgba(255, 255, 255, 0.15);">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 350 80" width="220" height="50">
+      <defs>
+        <linearGradient id="academixGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#5dd39e" /><stop offset="100%" stop-color="#2d6a8d" />
+        </linearGradient>
+      </defs>
+      <path d="M 35 15 L 15 15 L 15 65 L 35 65" fill="none" stroke="url(#academixGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 65 15 L 85 15 L 85 65 L 65 65" fill="none" stroke="url(#academixGrad)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+      <path d="M 50 25 L 25 38 L 50 51 L 75 38 Z" fill="url(#academixGrad)" />
+      <path d="M 32 42 L 32 55 C 32 60, 68 60, 68 55 L 68 42" fill="none" stroke="#f8fafc" stroke-width="3" />
+      <circle cx="50" cy="51" r="2.5" fill="#fff" />
+      <text x="110" y="48" font-family="'Segoe UI', Tahoma, sans-serif" font-size="32" font-weight="800" fill="#ffffff">Academi</text>
+      <text x="245" y="48" font-family="'Segoe UI', Tahoma, sans-serif" font-size="32" font-weight="900" fill="url(#academixGrad)">X</text>
+      <text x="112" y="68" font-family="'Segoe UI', Tahoma, sans-serif" font-size="11" font-weight="600" fill="#cbd5e1" letter-spacing="2">AI ATTENDANCE</text>
+    </svg>
+
+    <div style="display: flex; align-items: center; gap: 20px;">
+      <span style="font-size: 1.1em; font-weight: 500; color: #e2e8f0;">Professor Dashboard <span id="prof-name" style="font-weight: 700; color: #fff;"></span></span>
+      <button class="logout-btn" onclick="logout()">Logout</button>
+    </div>
+  </header>
+  <div class="container">
+    
+    <div class="panel">
+      <h2>Live Attendance Scanner</h2>
+      <div id="status-bar" class="status">Loading application...</div>
+      
+      <div class="controls">
+        <input type="text" id="subject-input" placeholder="Subject (e.g. CS101)" required>
+        <input type="text" id="dept-input" placeholder="Department (e.g. CS)" required>
+        <button id="start-btn">Load Students & Start Camera</button>
+        <button id="capture-btn" style="background:#f39c12; display:none;">Capture & Log Attendance</button>
+      </div>
+
+      <div class="video-wrapper">
+        <video id="webcam" autoplay muted playsinline></video>
+      </div>
+
+      <div class="log-container">
+        <h3>Attendance Log</h3>
+        <div id="logs"></div>
+      </div>
+    </div>
+
+    <div class="panel" id="stats-panel">
+      <h2>Live Class Statistics: <span id="stats-subject-title">...</span></h2>
+      <p id="total-classes-text" style="color: #cbd5e1; margin-top: -10px; margin-bottom: 15px;">
+        Total Classes Held: 0
+      </p>
+
+      <table id="class-stats-table" style="display: none;">
+        <thead>
+          <tr>
+            <th>Roll No</th>
+            <th>Student Name</th>
+            <th>Attended</th>
+            <th>Percentage</th>
+          </tr>
+        </thead>
+        <tbody id="class-stats-body">
+          </tbody>
+      </table>
+      
+      <div id="stats-empty-state" style="text-align: center; padding: 20px; color: #dbeafe; font-style: italic;">
+        Enter a Subject and Department, then click Start Camera to load live stats.
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+  <script src="../js/auth.js"></script>
+  <script src="../js/professor.js"></script>
+</body>
+</html>
