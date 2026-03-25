@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         );
       });
 
-      faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.55);
+      faceMatcher = new faceapi.FaceMatcher(labeledDescriptors, 0.40);
 
       // --- NEW: Load the class stats table right before the camera starts ---
       await loadClassStats(subject, department);
